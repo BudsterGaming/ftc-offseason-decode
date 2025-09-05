@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.marionette;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 public class HardwareConstrainer {
+    public static String exceptionMessage = " is nonexistent/is null.";
 
     static class varConstraints {
         double min, max;
@@ -42,7 +44,7 @@ public class HardwareConstrainer {
                 throw new RuntimeException("varToCheck does not exist/is null!");
             }
         } catch (RuntimeException exception) {
-            //TODO add 'obvious' code here for the eventual dashboard thingy
+            throw new RuntimeException(varToCheck + exceptionMessage);
         }
 
         if (valueToSet <= toCheck.max && valueToSet >= toCheck.min) {

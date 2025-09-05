@@ -18,22 +18,54 @@ public class Pose { //Pose, also does any crazy checks
     double var1, var2, pid;
 
     void checkConstraints(double outtakePosToSet, double clawPosToSet, double clawWristPosToSet, double wristPosToSet, double slidePosToSet, int liftPosToSet) {
-        if (!HardwareConstrainer.checkValue("outtake", outtakePosToSet)) {
-            throw new RuntimeException("Outtake is exceeding constraints!");
+        try {
+            if (!HardwareConstrainer.checkValue("outtake", outtakePosToSet)) {
+                throw new RuntimeException("Outtake is exceeding constraints!");
+            }
+            if (!HardwareConstrainer.checkValue("claw", outtakePosToSet)) {
+                throw new RuntimeException("Claw is exceeding constraints!");
+            }
+            if (!HardwareConstrainer.checkValue("clawWrist", outtakePosToSet)) {
+                throw new RuntimeException("Claw Wrist is exceeding constraints!");
+            }
+            if (!HardwareConstrainer.checkValue("wrist", outtakePosToSet)) {
+                throw new RuntimeException("Wrist is exceeding constraints!");
+            }
+            if (!HardwareConstrainer.checkValue("slide", outtakePosToSet)) {
+                throw new RuntimeException("Slide is exceeding constraints!");
+            }
+            //A pid can be added here if you are using one
+        } catch (RuntimeException exception) {
+            if (exception.getMessage().contains(HardwareConstrainer.exceptionMessage)) {
+                throw exception;
+            }
+            else {
+                if (exception.getMessage().contains("Outtake")) {
+                    clampToNearestExtreme(outtakePosToSet, "outtake");
+                }
+                if (exception.getMessage().contains("Claw") && !exception.getMessage().contains("Wrist")) {
+                    clampToNearestExtreme(clawPosToSet, "claw");
+                }
+                if (exception.getMessage().contains("Claw Wrist")) {
+                    clampToNearestExtreme(clawWristPosToSet, "clawWrist");
+                }
+                if (exception.getMessage().contains("Wrist") && !exception.getMessage().contains("Claw")) {
+                    clampToNearestExtreme(wristPosToSet, "wrist");
+                }
+                if (exception.getMessage().contains("Slide")) {
+                    clampToNearestExtreme(slidePosToSet, "slide");
+                }
+            }
         }
-        if (!HardwareConstrainer.checkValue("claw", outtakePosToSet)) {
-            throw new RuntimeException("Claw is exceeding constraints!");
+    }
+
+    void clampToNearestExtreme(double toClamp, String varName) {
+        if (toClamp < HardwareConstrainer.getMin(varName)) {
+            toClamp = HardwareConstrainer.getMin(varName);
         }
-        if (!HardwareConstrainer.checkValue("clawWrist", outtakePosToSet)) {
-            throw new RuntimeException("Claw Wrist is exceeding constraints!");
+        if (toClamp < HardwareConstrainer.getMax(varName)) {
+            toClamp = HardwareConstrainer.getMax(varName);
         }
-        if (!HardwareConstrainer.checkValue("wrist", outtakePosToSet)) {
-            throw new RuntimeException("Wrist is exceeding constraints!");
-        }
-        if (!HardwareConstrainer.checkValue("slide", outtakePosToSet)) {
-            throw new RuntimeException("Slide is exceeding constraints!");
-        }
-        //TODO other pid
     }
 
 
