@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.marionette;
 
 public class Pose { //Pose, also does any crazy checks
     private double outtakePos = 0;

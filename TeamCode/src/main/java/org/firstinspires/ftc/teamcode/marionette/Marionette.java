@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.marionette;
 
 public class Marionette { //Collection of poses
     Pose intakePos = new Pose();
